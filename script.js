@@ -16,6 +16,9 @@ var timetable_custom_attributes_concat = {
 	"btch" : " + ",
 }
 
+
+var table = document.getElementById("timetable");
+
 window.onload = function() {
 	fillRowTitles();
 	fillColumnTitles();
@@ -58,4 +61,41 @@ function fillCustomAttributes(){
 			}
 		});
 	}
+}
+
+var timetable_cells = table.querySelectorAll("td, th");
+timetable_cells.forEach(cell => {
+	cell.addEventListener("click", function() {
+		if(cell.classList.contains("active")){
+			cell.classList.remove("active");
+		} else{
+			cell.classList.add("active");
+		}
+	});
+});
+
+var mouseclicked = 0;
+var cell_deactivate = false;
+table.addEventListener("mousedown", function() {
+	mouseclicked++;
+});
+
+table.addEventListener("mouseup", function() {
+	mouseclicked--;
+});
+
+timetable_cells.forEach(cell => {
+	cell.addEventListener("mousemove", e => {
+		if(mouseclicked==1){
+			if(!cell_deactivate && !cell.classList.contains("active")){
+				cell.classList.add("active");
+			} else if(cell_deactivate && cell.classList.contains("active")){
+				cell.classList.remove("active");
+			}
+		}
+	});
+});
+
+function timetable_addRow() {
+
 }

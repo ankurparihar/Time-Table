@@ -1,18 +1,23 @@
-table, th, td {
+#timetable_holder table {
+	margin-left: auto;
+	margin-right: auto;
+	font-family: 'Times New Roman';
+}
+
+#timetable, #timetable tr th, #timetable tr td {
 	border: 1px solid black;
 	border-collapse: collapse;
 }
 
-th, td {
+#timetable tr th, #timetable tr td {
 	text-align: center;
 	padding: 5px;
+	width: 150px;
+	min-width: 150px;
+	cursor: cell;
 }
 
-th:hover, td:hover {
-	background-color: aquamarine;
-}
-
-td p {
+#timetable tr td p {
 	margin: 2px;
 }
 
@@ -24,4 +29,8 @@ td p {
 		  -ms-user-select: none; /* Internet Explorer/Edge */
 			  user-select: none; /* Non-prefixed version, currently
 									supported by Chrome and Opera */
+}
+
+#timetable tr th.active, #timetable tr td.active {
+	background-color: aquamarine;
 }
