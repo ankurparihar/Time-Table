@@ -4,8 +4,8 @@ var timetable_title_attributes = {
 };
 
 var timetable_custom_attributes = {
-	"sess" : ["L", "T"],
-	"subj" : ["CSN-501", "CSN-502", "CSN-503", "CSN-517", "CSN-499"],
+	// "sess" : ["L", "T"],
+	"subj" : ["[CSN-501]", "[CSN-502]", "[CSN-503]", "[CSN-517]", "[CSN-499]"],
 	"prof" : ["SG", "MM", "DT", "SK", "PPR", "RT"],
 	"btch" : ["B.Tech IV", "M.Tech I", "CS1", "CS2"],
 	"vnue" : ["LHC-206", "W-201", "W-202", "S-310"]
@@ -16,6 +16,15 @@ var timetable_custom_attributes_concat = {
 	"btch" : " + ",
 }
 
+function timetableGetCellTemplate() {
+	var td = document.createElement("td");
+	for(var key in timetable_custom_attributes) {
+		var p = document.createElement("p");
+		p.classList.add(key);
+		td.appendChild(p);
+	}
+	return td;
+}
 
 var table = document.getElementById("timetable");
 
@@ -64,18 +73,36 @@ function fillCustomAttributes(){
 }
 
 var timetable_cells = table.querySelectorAll("td, th");
+var mouseclicked = 0;
+var cell_deactivate = false;
+var active_cells = 0;
+var key_ctrl_down = false;
+var copied_content = {
+	copied : false,
+	content : ""
+};
+
 timetable_cells.forEach(cell => {
 	cell.addEventListener("click", function() {
-		if(cell.classList.contains("active")){
-			cell.classList.remove("active");
-		} else{
-			cell.classList.add("active");
+		if(key_ctrl_down){
+			if(cell.classList.contains("active")){
+				cell.classList.remove("active");
+				active_cells--;
+			} else{
+				cell.classList.add("active");
+				active_cells++;
+			}
+		} else {
+			timetableDeselectAll();
+			if(!cell.classList.contains("active")){
+				cell.classList.add("active");
+				active_cells++;
+			}
 		}
 	});
 });
 
-var mouseclicked = 0;
-var cell_deactivate = false;
+
 table.addEventListener("mousedown", function() {
 	mouseclicked++;
 });
@@ -89,8 +116,10 @@ timetable_cells.forEach(cell => {
 		if(mouseclicked==1){
 			if(!cell_deactivate && !cell.classList.contains("active")){
 				cell.classList.add("active");
+				active_cells++;
 			} else if(cell_deactivate && cell.classList.contains("active")){
 				cell.classList.remove("active");
+				active_cells--;
 			}
 		}
 	});
@@ -98,4 +127,63 @@ timetable_cells.forEach(cell => {
 
 function timetable_addRow() {
 
+}
+
+function timetable_addCol() {
+
+}
+
+document.addEventListener("keydown", e => {
+	switch(e.keyCode){
+		case 17:	// ctrl
+			key_ctrl_down = true;
+			break;
+		case 67:	// c
+			if(key_ctrl_down) timetableCopyCell();
+			break;
+		case 86:	// v
+			if(key_ctrl_down) timetablePasteCell();
+			break;
+		case 46:	// del
+			timetableClearCells();
+			break;
+	}
+});
+
+document.addEventListener("keyup", e => {
+	if(e.keyCode == 17) key_ctrl_down = false;
+})
+
+function timetableCopyCell() {
+	var cells = table.querySelectorAll("td.active");
+	if(cells.length != 1) return;
+	var cell = cells[0];
+	if(cell.classList.contains("r0") || cell.classList.contains("c0")) return;
+	copied_content["copied"] = true;
+	copied_content["content"] = cell.innerHTML;
+	console.log("copied!!!");
+}
+
+function timetablePasteCell() {
+	if(!copied_content["copied"]) return;
+	var cells = table.querySelectorAll("td.active");
+	if(cells.length != 1) return;
+	var cell = cells[0];
+	if(cell.classList.contains("r0") || cell.classList.contains("c0")) return;
+	cell.innerHTML = copied_content["content"];
+	console.log("pasted!!!");
+}
+
+function timetableClearCells() {
+	var cells = table.querySelectorAll("td.active");
+	cells.forEach(cell => {
+		cell.innerHTML = timetableGetCellTemplate().innerHTML;
+	});
+}
+
+function timetableDeselectAll() {
+	timetable_cells.forEach(cell => {
+		cell.classList.remove("active");
+	});
+	active_cells = 0;
 }
