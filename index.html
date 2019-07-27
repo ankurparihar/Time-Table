@@ -12,6 +12,29 @@
 	<div id="timetable_holder">
 		<table id="timetable" class="noselect"></table>
 	</div>
+	<div id="timetable_options">
+		<p id="desc">No cell selected</p>
+		<div id="options">
+		</div>
+		<div id="copy_paste">
+			<button id="button_copy" onclick="timetableCopyCell()">Copy cell</button>
+			<button id="button_paste" onclick="timetablePasteCell()">Paste cell</button>
+			<button id="button_clear" onclick="timetableClearCells()">Clear cell</button>
+		</div>
+		<div id="cell_select_flip">
+			<button id="button_flip_select" onclick="timetableFlipBatchSelect()">Batch cell select</button>
+			<button id="button_deselect" onclick="timetableDeselectAll()">Deselect all cells</button>
+		</div>
+	</div>
+	<div id="timetable_manual">
+		<p id="title">Instructions and Features</p>
+		<p>Select single cells by clicking</p>
+		<p>Select multiple cells by clicking and moving</p>
+		<p>If selected cells are of same type [data or header], then options are displayed</p>
+		<p>Copy [button or ctrl+c] and Paste [button or ctrl+v] single cell</p>
+		<p>Copy [single cell], Paste [multiple cells], Clear [multiple cells]</p>
+		<p>Batch select or clear modes</p>
+	</div>
 	<script src="./data.js"></script>
 	<script src="./script.js"></script>
 </body>

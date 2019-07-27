@@ -1,4 +1,12 @@
+/**
+ * @typedef {HTMLElement} table
+ * @typedef {HTMLElement} timetable_options
+ * @typedef {HTMLElement} timetable_flip_select
+ */
+
 var table = document.getElementById("timetable");
+var timetable_options = document.getElementById("timetable_options");
+var timetable_flip_select = document.getElementById("button_flip_select");
 
 function timetableGetCellTemplate(list) {
 	var td = document.createElement("td");
@@ -34,8 +42,10 @@ function deployGrid() {
 		var td = document.createElement("td");
 		td.classList.add("c0", "r" + i)
 		tr.appendChild(td);
-		for(var j=1; j<timetable_data["cols"]["num"]; ++j){
-			tr.appendChild(timetableGetCellTemplate(timetable_data["cells"][j][i]));
+		for(var j=1; j<timetable_data["cols"]["data"].length; ++j){
+			td = timetableGetCellTemplate(timetable_data["cells"][j][i]);
+			td.classList.add("c" + j, "r" + i);
+			tr.appendChild(td);
 		}
 		table.appendChild(tr);
 	}
@@ -110,6 +120,7 @@ function timetableDeplayEventListerners() {
 					cell.classList.remove("active");
 					active_cells--;
 				}
+				updateTimetableOptions();
 			}
 		});
 	});
@@ -152,6 +163,7 @@ function timetableDeplayEventListerners() {
 					active_cells++;
 				}
 			}
+			updateTimetableOptions();
 		});
 	});
 }
@@ -165,7 +177,14 @@ function timetable_addCol() {
 
 }
 
-
+function timetableFlipBatchSelect() {
+	if(cell_deactivate){
+		timetable_flip_select.innerHTML = "Batch cell select";
+	} else {
+		timetable_flip_select.innerHTML = "Batch cell deselect";
+	}
+	cell_deactivate = !cell_deactivate;
+}
 
 function timetableCopyCell() {
 	var cells = table.querySelectorAll("td.active");
@@ -179,10 +198,12 @@ function timetableCopyCell() {
 function timetablePasteCell() {
 	if(!copied_content["copied"]) return;
 	var cells = table.querySelectorAll("td.active");
-	if(cells.length != 1) return;
-	var cell = cells[0];
-	if(cell.classList.contains("r0") || cell.classList.contains("c0")) return;
-	cell.innerHTML = copied_content["content"];
+	cells.forEach(cell => {
+		if(!cell.classList.contains("r0") && !cell.classList.contains("c0")){
+			cell.innerHTML = copied_content["content"];
+		}
+	});
+	updateTimetableOptions();
 }
 
 function timetableClearCells() {
@@ -197,6 +218,81 @@ function timetableDeselectAll() {
 		cell.classList.remove("active");
 	});
 	active_cells = 0;
+	updateTimetableOptions();
+}
+
+function showSingleCellOptions() {
+	var cells = table.querySelectorAll("td.active, th.active");
+	var widget = timetable_options.querySelector("#options");
+	widget.innerHTML = "";
+
+	if(cells.length == 0) {
+		timetable_options.querySelector("#desc").innerHTML = "No cell selected";
+	}
+
+	if(cells.length != 1) return;
+	var cell = cells[0];
+	if(cell.classList.contains("r0") || cell.classList.contains("c0")) {
+		timetable_options.querySelector("#desc").innerHTML = "Header Cell Options";
+		widget.innerHTML = `<input type="text" tabindex=0 value="` + table.querySelector(".active").innerText + `" oninput=updateSingleCellOption("header")></input>`;
+	}
+	else {
+		timetable_options.querySelector("#desc").innerHTML = "Data Cell options";
+		for(var key in timetable_data["custom_attributes"]){
+			var select = document.createElement("select");
+			select.id = "select_" + key;
+			select.setAttribute("onchange", "updateSingleCellOption('select_" + key + "')");
+			timetable_data["custom_attributes"][key].forEach(option => {
+				var option_elem = document.createElement("option");
+				option_elem.value = option;
+				option_elem.innerHTML = option;
+				select.appendChild(option_elem);
+			});
+			select.value = table.querySelector(".active p." + key).innerHTML;
+			var div = document.createElement("div");
+			var p = document.createElement("p");
+			p.innerHTML = key;
+			div.appendChild(p);
+			div.appendChild(select);
+			widget.appendChild(div);
+		}
+	}
+}
+
+function showGroupCellOptions() {
+	var cells_header = table.querySelectorAll(".r0.active, .c0.active");
+	var cells_data = [];
+	var widget = timetable_options.querySelector("#options");
+	for(var i=1; i<timetable_data["rows"]["data"].length; ++i){
+		for(var j=1; j<timetable_data["cols"]["data"].length; ++j){
+			var elem = table.querySelector(".r"+i+".c"+j);
+			if(elem.classList.contains("active")) cells_data.push(elem);
+		}
+	}
+	if(cells_header.length>0 && cells_data.length==0){
+		timetable_options.querySelector("#desc").innerHTML = active_cells + " header cells selected";
+	} else if (cells_header.length==0 && cells_data.length>0){
+		timetable_options.querySelector("#desc").innerHTML = active_cells + " data cells selected";
+	} else {
+		timetable_options.querySelector("#desc").innerHTML = active_cells + " Mixed cells selected";
+	}
+}
+
+function updateTimetableOptions() {
+	if(active_cells < 2) showSingleCellOptions();
+	else showGroupCellOptions();
+}
+
+/**
+ * @param {string} type
+ */
+function updateSingleCellOption(type) {
+	if(type=="header"){
+		table.querySelector(".active").innerHTML = timetable_options.querySelector("input").value;
+	} else if(type.match("select_")){
+		var key = type.replace("select_", "");
+		table.querySelector(".active p." + key).innerHTML = timetable_options.querySelector("select#select_" + key).value;
+	}
 }
 
 window.onload = function() {
