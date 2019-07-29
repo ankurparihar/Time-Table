@@ -1,49 +1,354 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135797512-1"></script>
+	<script>
+  		window.dataLayer = window.dataLayer || [];
+  		function gtag(){dataLayer.push(arguments);}
+  		gtag('js', new Date());
+		gtag('config', 'UA-135797512-1');
+	</script>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<title>Time-Table generator</title>
-	<link rel="stylesheet" type="text/css" href="./style.css">
-	<link rel="shortcut icon" href="./favicon.png">
-
+	<meta name="theme-color" content="#f3c669"/>
+	<meta name="msapplication-tap-highlight" content="no" />
+	<meta name="Description" content="Ankur's little playground">
+	<meta name="twitter:card" content="summary">
+	<meta name="twitter:creator" content="@player4015">
+	<meta property="og:title" content="Ankur's little playground">
+	<meta property="og:url" content="https://ankurparihar.github.io/demo/fractal-generator">
+	<meta property="og:description" content="Fractal Generator by @ankurparihar">
+	<meta property="og:image" content="https://ankurparihar.github.io/media/demo/Sierpinski_triangle.png">
+	<meta property="og:type" content="website">
+	<meta property="fb:app_id" content="375052696661430">
+	<meta http-equiv="keywords" content="Ankur, Ankur Parihar, player4015, ankurparihar, fractal generator, fractal, sc4ry_cr0w, IITR, IITRoorkee, IIT Roorkee, Indian Institute of Technology Roorkee, Jodhpur, Roorkee, Rajasthan, undergraduate, UG, U.G., B.Tech, b.tech, b tech, collage">
+	<!-- <meta http-equiv="X-UA-Compatible" content="ie=edge"> -->
+	<title>Ankur's little playground</title>
+	<link rel="manifest" href="/manifest.json">
+	<link rel="shortcut icon" href="/media/img/AP-favicon.png">
+	<link rel="stylesheet" href="/media/style.css">
+	<link rel="stylesheet" href="/media/simplebar.min.css">
 </head>
 <body>
-	<div id="timetable_holder">
-		<h2>Department of Computer Science & Engineering</h2>
-		<h3>Indian Institute of Technology Roorkee</h3>
-		<h3>Autumn 2019 - 2020</h4>
-		<h4>Time Table of B.Tech IV year</h4>
-		<table id="timetable" class="noselect"></table>
-	</div>
-	<div id="timetable_options">
-		<p id="desc">No cell selected</p>
-		<div id="options">
+	<div id="__layout">
+		<div class="overlay"></div>
+		<aside class="side-nav theme-dark">
+			<div class="side-nav-scroll-container data-simplebar" id="simple_scrollbar">
+				<div class="scroll-content">
+					<div class="blank-nav-box"></div>
+					<div class="list side-nav-list">
+						<div>
+							<a href="javascript:loadDoc('/index.html','nav-home-icon','home')" class="list-tile" tabindex="-1">
+								<div class="list_tile-icon" id="nav-home-icon">
+									<svg style="width:24px;height:24px" viewBox="0 0 24 24">
+										<path fill="currentColor" d="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z" />
+									</svg>
+								</div>
+								<div class="list-tile-content">Home</div>
+							</a>
+						</div>
+						<div>
+							<a href="/recent" class="list-tile" tabindex="-1">
+								<div class="list_tile-icon" id="nav-recent-icon">
+									<!-- <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+										<path fill="#ffffff" d="M17.55,11.2C17.32,10.9 17.05,10.64 16.79,10.38C16.14,9.78 15.39,9.35 14.76,8.72C13.3,7.26 13,4.85 13.91,3C13,3.23 12.16,3.75 11.46,4.32C8.92,6.4 7.92,10.07 9.12,13.22C9.16,13.32 9.2,13.42 9.2,13.55C9.2,13.77 9.05,13.97 8.85,14.05C8.63,14.15 8.39,14.09 8.21,13.93C8.15,13.88 8.11,13.83 8.06,13.76C6.96,12.33 6.78,10.28 7.53,8.64C5.89,10 5,12.3 5.14,14.47C5.18,14.97 5.24,15.47 5.41,15.97C5.55,16.57 5.81,17.17 6.13,17.7C7.17,19.43 9,20.67 10.97,20.92C13.07,21.19 15.32,20.8 16.93,19.32C18.73,17.66 19.38,15 18.43,12.72L18.3,12.46C18.1,12 17.83,11.59 17.5,11.21L17.55,11.2M14.45,17.5C14.17,17.74 13.72,18 13.37,18.1C12.27,18.5 11.17,17.94 10.5,17.28C11.69,17 12.39,16.12 12.59,15.23C12.76,14.43 12.45,13.77 12.32,13C12.2,12.26 12.22,11.63 12.5,10.94C12.67,11.32 12.87,11.7 13.1,12C13.86,13 15.05,13.44 15.3,14.8C15.34,14.94 15.36,15.08 15.36,15.23C15.39,16.05 15.04,16.95 14.44,17.5H14.45Z" />
+									</svg> -->
+									<svg style="width:24px;height:24px" viewBox="0 0 24 24">
+										<path fill="currentColor" d="M21,10.12H14.22L16.96,7.3C14.23,4.6 9.81,4.5 7.08,7.2C4.35,9.91 4.35,14.28 7.08,17C9.81,19.7 14.23,19.7 16.96,17C18.32,15.65 19,14.08 19,12.1H21C21,14.08 20.12,16.65 18.36,18.39C14.85,21.87 9.15,21.87 5.64,18.39C2.14,14.92 2.11,9.28 5.62,5.81C9.13,2.34 14.76,2.34 18.27,5.81L21,3V10.12M12.5,8V12.25L16,14.33L15.28,15.54L11,13V8H12.5Z" />
+									</svg>
+								</div>
+								<div class="list-tile-content">Recent</div>
+							</a>
+						</div>
+						<div>
+							<a href="/browse" class="list-tile" tabindex="-1">
+								<div class="list_tile-icon" id="nav-browse-icon">
+									<svg style="width:24px;height:24px" viewBox="0 0 24 24">
+										<path fill="currentColor" d="M7.2,11.2C8.97,11.2 10.4,12.63 10.4,14.4C10.4,16.17 8.97,17.6 7.2,17.6C5.43,17.6 4,16.17 4,14.4C4,12.63 5.43,11.2 7.2,11.2M14.8,16A2,2 0 0,1 16.8,18A2,2 0 0,1 14.8,20A2,2 0 0,1 12.8,18A2,2 0 0,1 14.8,16M15.2,4A4.8,4.8 0 0,1 20,8.8C20,11.45 17.85,13.6 15.2,13.6A4.8,4.8 0 0,1 10.4,8.8C10.4,6.15 12.55,4 15.2,4Z" />
+									</svg>
+								</div>
+								<div class="list-tile-content">Browse</div>
+							</a>
+						</div>
+						<div>
+							<a href="/search" class="list-tile" tabindex="-1">
+								<div class="list_tile-icon" id="nav-search-icon">
+									<svg style="width:24px;height:24px" viewBox="0 0 24 24">
+										<path fill="currentColor" d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" />
+									</svg>
+								</div>
+								<div class="list-tile-content">Search</div>
+							</a>
+						</div>
+					</div>
+					<div class="list side-nav-list">
+						<div class="sub-nav-subheading">Resources</div>
+						<div>
+							<a href="javascript:loadDoc('/res-iitr/index.html', 'nav-res-iitr')" class="list-tile" tabindex="-1">
+								<div class="list_tile-icon" id="nav-res-iitr">
+									<svg style="width:24px;height:24px" viewBox="0 0 24 24">
+										<path fill="currentColor" d="M19,2L14,6.5V17.5L19,13V2M6.5,5C4.55,5 2.45,5.4 1,6.5V21.16C1,21.41 1.25,21.66 1.5,21.66C1.6,21.66 1.65,21.59 1.75,21.59C3.1,20.94 5.05,20.5 6.5,20.5C8.45,20.5 10.55,20.9 12,22C13.35,21.15 15.8,20.5 17.5,20.5C19.15,20.5 20.85,20.81 22.25,21.56C22.35,21.61 22.4,21.59 22.5,21.59C22.75,21.59 23,21.34 23,21.09V6.5C22.4,6.05 21.75,5.75 21,5.5V7.5L21,13V19C19.9,18.65 18.7,18.5 17.5,18.5C15.8,18.5 13.35,19.15 12,20V13L12,8.5V6.5C10.55,5.4 8.45,5 6.5,5V5Z" />
+									</svg>
+								</div>
+								<div class="list-tile-content">IITR</div>
+							</a>
+						</div>
+						<div>
+							<a href="javascript:loadDoc('/demo/index.html', 'nav-live-demo')" class="list-tile active-list-tile" tabindex="-1">
+								<div class="list_tile-icon" id="nav-live-demo">
+									<svg style="width:24px;height:24px" viewBox="0 0 24 24">
+										<path fill="currentColor" d="M4,2A1,1 0 0,0 3,3V4A1,1 0 0,0 4,5H5V14H11V16.59L6.79,20.79L8.21,22.21L11,19.41V22H13V19.41L15.79,22.21L17.21,20.79L13,16.59V14H19V5H20A1,1 0 0,0 21,4V3A1,1 0 0,0 20,2H4Z" />
+									</svg>
+								</div>
+								<div class="list-tile-content">Live Demos</div>
+							</a>
+						</div>
+					</div>
+					<div class="list side-nav-list">
+						<div class="sub-nav-subheading">Connect</div>
+						<div>
+							<a href="https://www.facebook.com/ankur.parihar.773" target="_blank" rel="noopener" class="list-tile" tabindex="-1">
+								<div class="list_tile-icon" id="nav-connect-fb">
+									<svg style="width:24px;height:24px" viewBox="0 0 24 24">
+										<path fill="#ffffff" d="M17,2V2H17V6H15C14.31,6 14,6.81 14,7.5V10H14L17,10V14H14V22H10V14H7V10H10V6A4,4 0 0,1 14,2H17Z" />
+									</svg>
+								</div>
+								<div class="list-tile-content" style="color:#ffffff;">facebook</div>
+							</a>
+						</div>
+						<div>
+							<a href="https://twitter.com/player4015" target="_blank" rel="noopener" class="list-tile" tabindex="-1">
+								<div class="list_tile-icon" id="nav-connect-tw">
+									<svg style="width:24px;height:24px" viewBox="0 0 24 24">
+										<path fill="#ffffff" d="M22.46,6C21.69,6.35 20.86,6.58 20,6.69C20.88,6.16 21.56,5.32 21.88,4.31C21.05,4.81 20.13,5.16 19.16,5.36C18.37,4.5 17.26,4 16,4C13.65,4 11.73,5.92 11.73,8.29C11.73,8.63 11.77,8.96 11.84,9.27C8.28,9.09 5.11,7.38 3,4.79C2.63,5.42 2.42,6.16 2.42,6.94C2.42,8.43 3.17,9.75 4.33,10.5C3.62,10.5 2.96,10.3 2.38,10C2.38,10 2.38,10 2.38,10.03C2.38,12.11 3.86,13.85 5.82,14.24C5.46,14.34 5.08,14.39 4.69,14.39C4.42,14.39 4.15,14.36 3.89,14.31C4.43,16 6,17.26 7.89,17.29C6.43,18.45 4.58,19.13 2.56,19.13C2.22,19.13 1.88,19.11 1.54,19.07C3.44,20.29 5.7,21 8.12,21C16,21 20.33,14.46 20.33,8.79C20.33,8.6 20.33,8.42 20.32,8.23C21.16,7.63 21.88,6.87 22.46,6Z" />
+									</svg>
+								</div>
+								<div class="list-tile-content" style="color:#ffffff">Twitter</div>
+							</a>
+						</div>
+						<div>
+							<a href="https://www.linkedin.com/in/ankur-p-1a6b0b130" target="_blank" rel="noopener" class="list-tile" tabindex="-1">
+								<div class="list_tile-icon" id="nav-connect-LI">
+									<svg style="width:24px;height:24px" viewBox="0 0 24 24">
+										<path fill="#ffffff" d="M19,3A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5A2,2 0 0,1 3,19V5A2,2 0 0,1 5,3H19M18.5,18.5V13.2A3.26,3.26 0 0,0 15.24,9.94C14.39,9.94 13.4,10.46 12.92,11.24V10.13H10.13V18.5H12.92V13.57C12.92,12.8 13.54,12.17 14.31,12.17A1.4,1.4 0 0,1 15.71,13.57V18.5H18.5M6.88,8.56A1.68,1.68 0 0,0 8.56,6.88C8.56,5.95 7.81,5.19 6.88,5.19A1.69,1.69 0 0,0 5.19,6.88C5.19,7.81 5.95,8.56 6.88,8.56M8.27,18.5V10.13H5.5V18.5H8.27Z" />
+									</svg>
+								</div>
+								<div class="list-tile-content" style="color:#ffffff">LinkedIn</div>
+							</a>
+						</div>
+						<div>
+							<a href="https://www.youtube.com/channel/UCZtMy2-T3L5WGbtmMszP35w" target="_blank" rel="noopener" class="list-tile" tabindex="-1">
+								<div class="list_tile-icon" id="nav-connect-YT">
+									<svg style="width:24px;height:24px" viewBox="0 0 24 24">
+										<path fill="#ffffff" d="M10,15L15.19,12L10,9V15M21.56,7.17C21.69,7.64 21.78,8.27 21.84,9.07C21.91,9.87 21.94,10.56 21.94,11.16L22,12C22,14.19 21.84,15.8 21.56,16.83C21.31,17.73 20.73,18.31 19.83,18.56C19.36,18.69 18.5,18.78 17.18,18.84C15.88,18.91 14.69,18.94 13.59,18.94L12,19C7.81,19 5.2,18.84 4.17,18.56C3.27,18.31 2.69,17.73 2.44,16.83C2.31,16.36 2.22,15.73 2.16,14.93C2.09,14.13 2.06,13.44 2.06,12.84L2,12C2,9.81 2.16,8.2 2.44,7.17C2.69,6.27 3.27,5.69 4.17,5.44C4.64,5.31 5.5,5.22 6.82,5.16C8.12,5.09 9.31,5.06 10.41,5.06L12,5C16.19,5 18.8,5.16 19.83,5.44C20.73,5.69 21.31,6.27 21.56,7.17Z" />
+										<path fill="#000000" d="M10,15L15.19,12L10,9V15Z" />
+									</svg>
+								</div>
+								<div class="list-tile-content" style="color:#ffffff">YouTube</div>
+							</a>
+						</div>
+					</div>
+					<div class="list side-nav-list">
+						<div class="sub-nav-subheading">About</div>
+						<div>
+							<a href="javascript:loadDoc('/changelog/index.html', 'nav-about-whatnew')" class="list-tile" tabindex="-1">
+								<div class="list_tile-icon" id="nav-about-whatnew">
+									<svg style="width:24px;height:24px" viewBox="0 0 24 24">
+										<path fill="currentColor" d="M6.18,15.64A2.18,2.18 0 0,1 8.36,17.82C8.36,19 7.38,20 6.18,20C5,20 4,19 4,17.82A2.18,2.18 0 0,1 6.18,15.64M4,4.44A15.56,15.56 0 0,1 19.56,20H16.73A12.73,12.73 0 0,0 4,7.27V4.44M4,10.1A9.9,9.9 0 0,1 13.9,20H11.07A7.07,7.07 0 0,0 4,12.93V10.1Z" />
+									</svg>
+								</div>
+								<div class="list-tile-content">What's New</div>
+							</a>
+						</div>
+						<div>
+							<a href="/about-me" class="list-tile" tabindex="-1">
+								<div class="list_tile-icon" id="nav-resource-aboutme">
+									<svg style="width:24px;height:24px" viewBox="0 0 24 24">
+										<path fill="currentColor" d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z" />
+									</svg>
+								</div>
+								<div class="list-tile-content">About Me</div>
+							</a>
+						</div>
+					</div>
+					<div class="divider mb-48"></div>
+				</div>
+			</div>
+			<div class="blank-nav-box"></div>
+		</aside>
+		<nav class="toolbar transparent elevation-0">
+			<div class="toolbar-content">
+				<button type="button" class="nav-toggle btn btn-icon" aria-label="Navigate" onclick="toggleNav()">
+					<div class="nav-toggle-icon">
+						<div class="nav-toggle-icon-bar"></div>
+						<div class="nav-toggle-icon-bar"></div>
+						<div class="nav-toggle-icon-bar"></div>
+					</div>
+				</button>
+				<a href="https://ankurparihar.github.io" rel="noopener" class="logo-text-btn btn btn-large logo-text" tabindex="-1">
+					<div class="btn-content">
+						ankurparihar<span class="highlight">.</span>github<span class="highlight">.</span>io
+					</div>
+				</a>
+				<div class="divider-verticle"></div>
+				<div class="page-location-text">Live Demos</div>
+				<div class="toolbar-search theme-light flex card card-flat">
+					<div class="toolbar-search-box justify-center row flex input-group">
+						<label for="search_bar">Search</label>
+						<div class="input-group_input">
+							<input id="search_bar" spellcheck="false" tabindex="0" type="text" value="" oninput="alterSearchLabel()">
+							<div class="input-group_details"></div>
+						</div>
+					</div>
+				</div>
+				<div class="ankur_icon_holder">
+					<a href="https://github.com/ankurparihar" target="_blank" rel="noopener" tabindex="-1" aria-label="Ankur's github profile">
+						<div class="ankur_icon"></div>
+					</a>
+				</div>
+			</div>
+		</nav>
+		<div class="parallax_container">
+			<div class="parallax-img">
+			</div>
 		</div>
-		<div id="copy_paste">
-			<button id="button_copy" onclick="timetableCopyCell()">Copy cell</button>
-			<button id="button_paste" onclick="timetablePasteCell()">Paste cell</button>
-			<button id="button_clear" onclick="timetableClearCells()">Clear cell</button>
-		</div>
-		<div id="cell_select_flip">
-			<button id="button_flip_select" onclick="timetableFlipBatchSelect()">Batch cell select</button>
-			<button id="button_deselect" onclick="timetableDeselectAll()">Deselect all cells</button>
+		<div class="application theme-dark">
+			<div class="home_hero" style="display:none">
+				<div class="home_hero-title">
+					<h1>Ankur's Little Playground</h1>
+					<p class="home_hero-subtext">Also known as <span class="highlight">player4015</span>. I use this portal to display my work although not all and provide various resources like projects, notes, codes, course contents etc. that are availabe to public.</p>
+				</div>
+			</div>
+			<div class="content">
+				<link rel="stylesheet" href="/demo/style.css">
+				<link rel="stylesheet" href="/demo/Time-Table/style.css">
+				<div id="demo_div">
+					<div id="demo_header" class="flex">
+						<div id="demo_back" class="btn" onclick="window.location.href='/demo/'" title="Back to all demos">
+							<svg style="width:24px;height:24px;" viewBox="0 0 24 24">
+								<path fill="currentColor" d="M21,11H6.83L10.41,7.41L9,6L3,12L9,18L10.41,16.58L6.83,13H21V11Z" />
+							</svg>
+						</div>
+						<h1 id="demo_title">Time-Table Generator</h1>
+						<div id="demo_info" class="btn" title="Info" onclick="showInfoPop('Time-Table')">
+							<svg style="width:24px;height:24px;right:20px;" viewBox="0 0 24 24">
+								<path fill="currentColor" d="M11,18H13V16H11V18M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,6A4,4 0 0,0 8,10H10A2,2 0 0,1 12,8A2,2 0 0,1 14,10C14,12 11,11.75 11,15H13C13,12.75 16,12.5 16,10A4,4 0 0,0 12,6Z" />
+							</svg>
+						</div>
+					</div>
+					<div id="demo_content" class="flex">
+						<div id="timetable_holder">
+							<h2>Department of Computer Science & Engineering</h2>
+							<h3>Indian Institute of Technology Roorkee</h3>
+							<h3>Autumn 2019 - 2020</h4>
+							<h4>Time Table of B.Tech IV year</h4>
+							<table id="timetable" class="noselect"></table>
+						</div>
+						<div id="timetable_options">
+							<p id="desc">No cell selected</p>
+							<div id="options">
+							</div>
+							<div id="copy_paste">
+								<button id="button_copy" onclick="timetableCopyCell()">Copy cell</button>
+								<button id="button_paste" onclick="timetablePasteCell()">Paste cell</button>
+								<button id="button_clear" onclick="timetableClearCells()">Clear cell</button>
+							</div>
+							<div id="cell_select_flip">
+								<button id="button_flip_select" onclick="timetableFlipBatchSelect()">Batch cell select</button>
+								<button id="button_deselect" onclick="timetableDeselectAll()">Deselect all cells</button>
+							</div>
+						</div>
+						<div id="timetable_manual">
+							<p id="title" class="highlight">Instructions and Features</p>
+							<ul>
+								<li>Select single cells by clicking</li>
+								<li>Select multiple cells by clicking and moving</li>
+								<li>If selected cells are of same type [data or header], then options are displayed</li>
+								<li>Copy [button or ctrl+c] and Paste [button or ctrl+v] single cell</li>
+								<li>Copy [single cell], Paste [multiple cells], Clear [multiple cells]</li>
+								<li>Batch select or clear modes</li>
+								<li>Merge cells row-wise or column-wise, called <i>spanning</i></li>
+								<li>Right now table is configured using <span class="highlight"><code>timetable_data</code></span> in <a href="/demo/Time-Table/script.js">script.js</a></li>
+								<li>Right now screenshot is the only way to save this</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div id="demo_error">
+					<div class="error-message">
+						<h1>Sorry, the requested demo can not be played on this device :(</h1>
+					</div>
+					<h2>Error Code: DEVICE_WIDTH_INCOMPATIBLE</h2>
+					<h2>Issue: MIN_WIDTH 840px</h2>
+				</div>
+				<div class="demo_help-div" onclick="hideInfoPop()">
+					<div id="demo_help-popup"></div>
+				</div>
+			</div>
+			<div class="site-description">
+				<div class="sd-content">
+					<p>This site displays my work and resources available for public domain. The site's design is inspired from rddzc://rkxswo.df but all the logical structure was rewritten from scratch in order to remove external dependies, customize the structure and improve site's performance. The IIT Roorkee image and logo are copied from their <a href="https://iitr.ac.in" target="_blank" rel="noopener" tabindex="-1">website</a>. The shaded blocks effect on IITR image is copied from <a href="http://ranita.facsite.com/" target="_blank" rel="noopener" tabindex="-1">website</a>. Site description image is taken from <a href="https://www.freeiconspng.com/img/30718" target="_blank" rel="noopener" tabindex="-1">website</a>. Many of the site's material icons' svgs were taken from <a href="http://materialdesignicons.com" target="_blank" rel="noopener" tabindex="-1">website</a></p>
+				</div>
+			</div>
+			<div class="footer">
+				<div class="footer_main">
+					<div class="flex footer_column footer_column-logo">
+						<a href="/"><img src="/media/img/logo-50.png" width="auto" height="50px" alt="alp_logo"></img></a>
+					</div>
+					<div class="flex footer_column">
+						<h4>ankurparihar<span class="highlight">.</span>github<span class="highlight">.</span>io</h4>
+						<ul>
+							<li><a href="/">Home</a></li>
+							<li><a href="/recent/">Recent</a></li>
+							<li><a href="/browse/">Browse</a></li>
+							<li><a href="/search/">Search</a></li>
+						</ul>
+					</div>
+					<div class="flex footer_column">
+						<h4>Resources</h4>
+						<ul>
+							<li><a href="/res-iitr/">IITR</a></li>
+							<li><a href="/demo/">Live Demos</a></li>
+						</ul>
+					</div>
+					<div class="flex footer_column">
+						<h4>Connect</h4>
+						<ul>
+							<li><a href="https://www.facebook.com/ankur.parihar.773" target="_blank" rel="noopener">facebook</a></li>
+							<li><a href="https://twitter.com/player4015" target="_blank" rel="noopener">Twitter</a></li>
+							<li><a href="https://www.linkedin.com/in/ankur-p-1a6b0b130" target="_blank" rel="noopener">LinkedIn</a></li>
+							<li><a href="https://www.youtube.com/channel/UCZtMy2-T3L5WGbtmMszP35w" target="_blank" rel="noopener">YouTube</a></li>
+						</ul>
+					</div>
+					<div class="flex footer_column">
+						<h4>About</h4>
+						<ul>
+							<li><a href="/changelog/">What's new</a></li>
+							<li><a href="/about-me/">About me</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<!-- <div class="back_to_top theme-dark elevation-3"> -->
+			<div class="back_to_top theme-dark">
+				<button class="back_to_top-btn btn" aria-label="back to top" onclick="backToTop()">
+					<div style="transform: rotate(-45deg); left: 22px;" class="back_top_btn-icon"></div>
+					<div style="transform: rotate(45deg); right: 22px;" class="back_top_btn-icon"></div>
+				</button>
+			</div>
 		</div>
 	</div>
-	<div id="timetable_manual">
-		<p id="title">Instructions and Features</p>
-		<p>Select single cells by clicking</p>
-		<p>Select multiple cells by clicking and moving</p>
-		<p>If selected cells are of same type [data or header], then options are displayed</p>
-		<p>Copy [button or ctrl+c] and Paste [button or ctrl+v] single cell</p>
-		<p>Copy [single cell], Paste [multiple cells], Clear [multiple cells]</p>
-		<p>Batch select or clear modes</p>
-		<p>Merge cells row-wise or column-wise, called <i>spanning</i></p>
-		<p>Right now table is configured using <a href="./data.js">data.js</a></p>
-		<p>Right now screenshot is the only way to save this</p>
-	</div>
-	<script src="./data.js"></script>
-	<script src="./script.js"></script>
+	<script src="/media/database.js" type="text/javascript"></script>
+	<script src="/media/script.js" type="text/javascript"></script>
+	<script src="/media/dynamic.js" type="text/javascript"></script>
+	<script src="/media/simplebar.min.js" type="text/javascript"></script>
+	<script src="/media/personalization.js" type="text/javascript"></script>
+	<script>
+		var cur_tab = "nav-live-demo";
+	</script>
+	<script src="/demo/Time-Table/script.js" type="text/javascript"></script>
+	<script src="/demo/script.js" type="application/javascript"></script>
 </body>
+
 </html>

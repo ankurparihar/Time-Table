@@ -31,7 +31,7 @@ html {
 }
 
 #timetable, #timetable tr th, #timetable tr td {
-	border: 1px solid black;
+	border: 1px solid white;
 	border-collapse: collapse;
 }
 
@@ -57,8 +57,14 @@ html {
 									supported by Chrome and Opera */
 }
 
+
 #timetable tr th.active, #timetable tr td.active {
-	background-color: aquamarine;
+	background-color: #abbaab;
+}
+
+#timetable tr .r0, #timetable tr .c0 {
+	background-color: var(--theme-color, #f3c669);
+	color: #343434;
 }
 
 #timetable_options, #timetable_manual {
@@ -71,12 +77,14 @@ html {
 }
 
 #timetable_manual #title {
+	margin-top: 5px;
 	text-align: center;
+	font-size: 20px;
 }
 
-#timetable_manual p {
+#timetable_manual ul {
 	text-align: left;
-	margin: 5px;
+	margin: 35px;
 }
 
 #timetable_options #options{
@@ -190,4 +198,8 @@ html {
 	background-color: #eeeeee;
 	border: 2px solid #cf7814;
 	color: black;
+}
+
+#demo_back, #demo_info {
+    visibility: visible;
 }
