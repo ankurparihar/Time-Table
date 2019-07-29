@@ -110,19 +110,19 @@ function timetableDeplayEventListerners() {
 		mouseclicked--;
 	});
 	
-	timetable_cells.forEach(cell => {
-		cell.addEventListener("mousemove", e => {
-			if(mouseclicked==1){
-				if(!cell_deactivate && !cell.classList.contains("active")){
-					cell.classList.add("active");
-					active_cells++;
-				} else if(cell_deactivate && cell.classList.contains("active")){
-					cell.classList.remove("active");
-					active_cells--;
-				}
-				updateTimetableOptions();
+	table.addEventListener("mousemove", e => {
+		var cell = e.target;
+		if(mouseclicked==1){
+			while(cell.tagName.toLowerCase()!="td" && cell.tagName.toLowerCase()!="th") cell = cell.parentElement;
+			if(!cell_deactivate && !cell.classList.contains("active")){
+				cell.classList.add("active");
+				active_cells++;
+			} else if(cell_deactivate && cell.classList.contains("active")){
+				cell.classList.remove("active");
+				active_cells--;
 			}
-		});
+			updateTimetableOptions();
+		}
 	});
 
 	document.addEventListener("keydown", e => {
@@ -148,23 +148,29 @@ function timetableDeplayEventListerners() {
 
 	timetable_cells.forEach(cell => {
 		cell.addEventListener("click", function() {
-			if(key_ctrl_down){
-				if(cell.classList.contains("active")){
-					cell.classList.remove("active");
-					active_cells--;
-				} else{
-					cell.classList.add("active");
-					active_cells++;
-				}
-			} else {
-				timetableDeselectAll();
-				if(!cell.classList.contains("active")) {
-					cell.classList.add("active");
-					active_cells++;
-				}
-			}
-			updateTimetableOptions();
 		});
+	});
+	
+	table.addEventListener("click", e => {
+		var cell = e.target;
+		if(cell.tagName.toLowerCase()=="table") return;
+		while(cell.tagName.toLowerCase()!="td" && cell.tagName.toLowerCase()!="th") cell = cell.parentElement;
+		if(key_ctrl_down){
+			if(cell.classList.contains("active")){
+				cell.classList.remove("active");
+				active_cells--;
+			} else{
+				cell.classList.add("active");
+				active_cells++;
+			}
+		} else {
+			timetableDeselectAll();
+			if(!cell.classList.contains("active")) {
+				cell.classList.add("active");
+				active_cells++;
+			}
+		}
+		updateTimetableOptions();
 	});
 }
 
@@ -211,6 +217,7 @@ function timetableClearCells() {
 	cells.forEach(cell => {
 		cell.innerHTML = timetableGetCellTemplate().innerHTML;
 	});
+	updateTimetableOptions();
 }
 
 function timetableDeselectAll() {
@@ -266,7 +273,7 @@ function showGroupCellOptions() {
 	for(var i=1; i<timetable_data["rows"]["data"].length; ++i){
 		for(var j=1; j<timetable_data["cols"]["data"].length; ++j){
 			var elem = table.querySelector(".r"+i+".c"+j);
-			if(elem.classList.contains("active")) cells_data.push(elem);
+			if(elem && elem.classList.contains("active")) cells_data.push(elem);
 		}
 	}
 	if(cells_header.length>0 && cells_data.length==0){
@@ -295,10 +302,62 @@ function updateSingleCellOption(type) {
 	}
 }
 
-window.onload = function() {
+function fillCustomInnerHTML() {
+	var innerHTMLs = timetable_data["customInnerHTML"];
+	innerHTMLs.forEach(html => {
+		var cell = table.querySelector(".r" + html["cell"][0] + ".c" + html["cell"][1]);
+		cell.innerHTML = html["data"];
+	});
+}
+
+function deployCellSpans() {
+	var spans = timetable_data["span"];
+	spans.forEach(span => {
+		var row = span["row"][0];
+		var col = span["col"][0];
+		var rows = span["row"][1];
+		var cols = span["col"][1];
+		var elem = table.querySelector(".r" + row + ".c" + col);
+		var string = "";
+		for(var i=1; i<rows; ++i){
+			var f = table.querySelector(".r" + (row + i) + ".c" + (col));
+			string += f.innerHTML;
+			f.remove();
+		}
+		for(var i=1; i<cols; ++i){
+			var f = table.querySelector(".r" + (row) + ".c" + (col + i))
+			string += f.innerHTML;
+			f.remove();
+		}
+		elem.setAttribute("rowspan", rows);
+		elem.setAttribute("colspan", cols);
+		elem.innerHTML = elem.innerHTML + string;
+	});
+}
+
+function resetTimeTableVariables() {
+	mouseclicked = 0;
+	cell_deactivate = false;
+	active_cells = 0;
+	key_ctrl_down = false;
+	copied_content = {
+		copied : false,
+		content : ""
+	};
+	var widget = timetable_options.querySelector("#options");
+	widget.innerHTML = "";
+	timetable_options.querySelector("#desc").innerHTML = "No cell selected";
+}
+
+function showTimeTable() {
+	resetTimeTableVariables();
 	deployGrid();
 	fillRowTitles();
 	fillColumnTitles();
 	fillCustomAttributes();
 	timetableDeplayEventListerners();
+	fillCustomInnerHTML();
+	deployCellSpans();
 }
+
+window.onload = showTimeTable;

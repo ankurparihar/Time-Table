@@ -11,6 +11,25 @@ html {
 	font-family: 'Times New Roman';
 }
 
+#timetable_holder h2 {
+	text-align: center;
+	font-size: 28px;
+	margin: 20px auto 10px auto;
+}
+
+#timetable_holder h3 {
+	text-align: center;
+	font-size: 24px;
+	font-weight: normal;
+	margin: 10px;
+}
+
+#timetable_holder h4 {
+	text-align: center;
+	font-size: 20px;
+	margin: 10px;
+}
+
 #timetable, #timetable tr th, #timetable tr td {
 	border: 1px solid black;
 	border-collapse: collapse;
