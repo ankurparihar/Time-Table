@@ -29,6 +29,7 @@
 	<link rel="shortcut icon" href="/media/img/AP-favicon.png">
 	<link rel="stylesheet" href="/media/style.css">
 	<link rel="stylesheet" href="/media/simplebar.min.css">
+	<link rel="stylesheet" href="/media/fonts.roboto.css">
 </head>
 <body>
 	<div id="__layout">
@@ -102,6 +103,49 @@
 									</svg>
 								</div>
 								<div class="list-tile-content">Live Demos</div>
+							</a>
+						</div>
+					</div>
+					<div class="list side-nav-list">
+						<div class="sub-nav-subheading">Account</div>
+						<div>
+							<a href="javascript:loadDoc('/sign-in/index.html', 'nav-sign-in')" class="list-tile" tabindex="-1">
+								<div class="list_tile-icon" id="nav-sign-in">
+									<svg style="width:24px;height:24px" viewBox="0 0 24 24">
+										<path fill="currentColor" d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5c-1.11 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
+									</svg>
+								</div>
+								<div class="list-tile-content">Sign In</div>
+							</a>
+						</div>
+						<div style="display:none">
+							<a href="javascript:loadDoc('/account', 'nav-acc-setting')" class="list-tile" tabindex="-1">
+								<div class="list_tile-icon" id="nav-acc-setting">
+									<svg style="width:24px;height:24px" viewBox="0 0 24 24">
+										<path fill="currentColor" d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z"/>
+									</svg>
+								</div>
+								<div class="list-tile-content">Settings</div>
+							</a>
+						</div>
+						<div style="display:none">
+							<a href="javascript:loadDoc('/sign-in/index.html', 'nav-switch-acc')" class="list-tile" tabindex="-1">
+								<div class="list_tile-icon" id="nav-switch-acc">
+									<svg style="width:24px;height:24px" viewBox="0 0 24 24">
+										<path fill="currentColor" d="M16,9C18.33,9 23,10.17 23,12.5V15H17V12.5C17,11 16.19,9.89 15.04,9.05L16,9M8,9C10.33,9 15,10.17 15,12.5V15H1V12.5C1,10.17 5.67,9 8,9M8,7A3,3 0 0,1 5,4A3,3 0 0,1 8,1A3,3 0 0,1 11,4A3,3 0 0,1 8,7M16,7A3,3 0 0,1 13,4A3,3 0 0,1 16,1A3,3 0 0,1 19,4A3,3 0 0,1 16,7M9,16.75V19H15V16.75L18.25,20L15,23.25V21H9V23.25L5.75,20L9,16.75Z" />
+									</svg>
+								</div>
+								<div class="list-tile-content">Switch accounts</div>
+							</a>
+						</div>
+						<div style="display:none">
+							<a href="javascript:signOut()" class="list-tile" tabindex="-1">
+								<div class="list_tile-icon" id="nav-sign-out">
+									<svg style="width:24px;height:24px" viewBox="0 0 24 24">
+										<path fill="currentColor" d="M16.56,5.44L15.11,6.89C16.84,7.94 18,9.83 18,12A6,6 0 0,1 12,18A6,6 0 0,1 6,12C6,9.83 7.16,7.94 8.88,6.88L7.44,5.44C5.36,6.88 4,9.28 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12C20,9.28 18.64,6.88 16.56,5.44M13,3H11V13H13" />
+									</svg>
+								</div>
+								<div class="list-tile-content">Sign Out</div>
 							</a>
 						</div>
 					</div>
@@ -193,6 +237,7 @@
 				</a>
 				<div class="divider-verticle"></div>
 				<div class="page-location-text">Live Demos</div>
+				<div class="spacer"></div>
 				<div class="toolbar-search theme-light flex card card-flat">
 					<div class="toolbar-search-box justify-center row flex input-group">
 						<label for="search_bar">Search</label>
@@ -202,11 +247,8 @@
 						</div>
 					</div>
 				</div>
-				<div class="ankur_icon_holder">
-					<a href="https://github.com/ankurparihar" target="_blank" rel="noopener" tabindex="-1" aria-label="Ankur's github profile">
-						<div class="ankur_icon"></div>
-					</a>
-				</div>
+				<div class="spacer"></div>
+				<div class="user-options"></div>
 			</div>
 		</nav>
 		<div class="parallax_container">
@@ -214,6 +256,7 @@
 			</div>
 		</div>
 		<div class="application theme-dark">
+			<div class="menu__content fixed user_options menuable__content__active" style="min-width:44px;top:68px;right:10px;transform-origin:right top;z-index:24"></div>
 			<div class="home_hero" style="display:none">
 				<div class="home_hero-title">
 					<h1>Ankur's Little Playground</h1>
