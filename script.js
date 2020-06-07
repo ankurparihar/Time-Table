@@ -1,93 +1,196 @@
-var timetable_data = {
-	rows: {
-		data: ["Time/Day", "08:00 - 08:55", "09:00 - 09:55", "10:00 - 10:55", "11:05 - 12:00", "12:05 - 01:00", "01:00 - 02:00", "02:00 - 02:55", "03:00 - 03:55", "04:05 - 05:00", "05:05 - 06:00"]
+const timetable__data = {
+	navID: 'nav-projects',
+	page_loc_text: 'Live Demo',
+	template: `
+	<div id="demo_page" class="demo-page page">
+		<div class="demo_page-head flex">
+			<div class="demo_page-title">Time-Table Generator</div>
+		</div>
+		<div class="demo_page-body">
+			<div class="demo_page-cont">
+				<div id="timetable_holder">
+					<h2>Department of Computer Science &amp; Engineering</h2>
+					<h3>Indian Institute of Technology Roorkee</h3>
+					<h3>Autumn 2019 - 2020</h3>
+					<h4>Time Table of B.Tech IV year</h4>
+					<table id="timetable" class="noselect">
+					</table>
+				</div>
+				<div id="timetable_options">
+					<p id="desc">No cell selected</p>
+					<div id="options" class="flex wrap"></div>
+					<div id="copy_paste">
+						<button class="btn" id="button_copy">Copy cell</button>
+						<button class="btn" id="button_paste">Paste cell</button>
+						<button class="btn" id="button_clear">Clear cell</button>
+					</div>
+					<div id="cell_select_flip">
+						<button class="btn" id="button_flip_select">Enable multi-select</button>
+						<button class="btn" id="button_deselect">Deselect all cells</button>
+					</div>
+				</div>
+				<div id="timetable_manual">
+					<p id="title" class="highlight">Instructions and Features</p>
+					<ul>
+						<li>If you're on mobile device, rotate to landscape</li>
+						<li>Select single cells by clicking</li>
+						<li>If selected cells are of same type (<span class="highlight">data</span> or <span class="highlight">header</span>), then options are displayed</li>
+						<li>Select/Deselect multiple cells by <code style="color:#cfbf2f">button</code> or by holding <code>ctrl-key</code></li>
+						<li>Deselect all cells by <code style="color:#cf7814">button</code></li>
+						<li>Copy cells by <code style="color:#4caf50">button</code> or <code>ctrl+c</code></li>
+						<li>Paste cells by <code style="color:#4c9baf">button</code> or <code>ctrl+v</code></li>
+						<li>Clear cells by <code style="color:#cf3a2f">button</code> or <code>delete</code></li>
+						<li>Copy, Paste and Clear works with <span class="highlight">data</span> cells only</li>
+						<li>Merge cells row-wise or column-wise, called <span class="highlight">spanning</span> (from script only)</li>
+						<li>Table is configured using <span class="highlight"><code>timetable__data</code></span> in <a class="highlight" href="https://github.com/ankurparihar/Time-Table/blob/github.io-dev/script.js">script.js</a></li>
+						<li>Right now screenshot is the only way to save table</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	`,
+	apply: (root) => {
+		if (root === undefined) {
+			console.warn('Error: contentRoot not specified')
+			return
+		}
+		root.innerHTML = timetable__data.template
+		timetable__data.displayTable()
+		timetable__data.onStaticLoad(root)
 	},
-	cols: {
-		data: ["Time/Day", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+	onStaticLoad: (root) => {
+		if (root === undefined) {
+			console.warn('Error: contentRoot not specified')
+			return
+		}
+		const btn_cpy = document.getElementById('button_copy')
+		const btn_pst = document.getElementById('button_paste')
+		const btn_clr = document.getElementById('button_clear')
+		const btn_btch = document.getElementById('button_flip_select')
+		const btn_dslt = document.getElementById('button_deselect')
+		btn_cpy.addEventListener('click', timetable__data.copyCells)
+		btn_pst.addEventListener('click', timetable__data.pasteCells)
+		btn_clr.addEventListener('click', timetable__data.clearCells)
+		btn_dslt.addEventListener('click', timetable__data.deselectCells)
+		btn_btch.addEventListener('click', () => {
+			if (timetable__data.batchMode) {
+				timetable__data.batchMode = false
+				btn_btch.innerHTML = 'Enable multi-select'
+			} else {
+				timetable__data.batchMode = true
+				btn_btch.innerHTML = 'Disable multi-select'
+			}
+		})
+
+		const table = document.getElementById('timetable')
+		table.querySelectorAll('th,td').forEach(cell => {
+			cell.addEventListener('click', (e) => {
+				timetable__data.handleClick(cell, e)
+			})
+		})
+		document.addEventListener('keydown', e => {
+			switch (e.keyCode) {
+				case 67:	// c
+					if (e.ctrlKey) timetable__data.copyCells()
+					break
+				case 86:	// v
+					if (e.ctrlKey) timetable__data.pasteCells()
+					break
+				case 46:	// del
+					timetable__data.clearCells()
+			}
+		})
 	},
-	custom_attributes: {
-		subj : ["[CSN-501]", "[CSN-502]", "[CSN-503]", "[CSN-517]", "[CSN-499]"],
-		prof : ["SG", "MM", "DT", "SK", "PPR", "RT"],
-		btch : ["B.Tech IV", "M.Tech I", "CS1", "CS2"],
-		vnue : ["LHC-206", "W-201", "W-202", "S-310", "S-301"]
+	batchMode: false,
+	selectedCells: [],
+	copiedCells: [],
+	selectedCellType: {
+		head: 0,
+		data: 0
 	},
-	custom_attributes_concat: {
-		prof : "+",
-		btch : " + ",
+	table_top: ['Time/Day', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+	table_left: ['Time/Day', '08:00 - 08:55', '09:00 - 09:55', '10:00 - 10:55', '11:05 - 12:00', '12:05 - 01:00', '01:00 - 02:00', '02:00 - 02:55', '03:00 - 03:55', '04:05 - 05:00', '05:05 - 06:00'],
+	selects: {
+		subj: ['[CSN-501]', '[CSN-502]', '[CSN-503]', '[CSN-517]', '[CSN-499]'],
+		prof: ['SG', 'MM', 'DT', 'SK', 'PPR', 'RT', 'PPR + RT'],
+		btch: ['B.Tech IV', 'M.Tech I', 'B.Tech IV CS1', 'B.Tech IV CS2', 'B.Tech IV + M.Tech I'],
+		vnue: ['LHC-206', 'W-201', 'W-202', 'S-310', 'S-301']
 	},
-	cells: [
+	attrs: ['subj', 'prof', 'btch', 'vnue'],
+	data_cells: [
 		[],
 		[
 			[],
-			["", "", "", ""],
-			["1", "1", "0 1", "0"],
-			["2", "2", "0 1", "4"],
-			["", "", "", ""],
-			["3", "3", "0 1", "0"],
-			["", "", "", ""],
-			["", "", "", ""],
-			["4", "4 5", "0 2", "3"],
-			["", "", "", ""],
-			["", "", "", ""]
+			[, , ,],
+			[1, 1, 4, 0],
+			[2, 2, 4, 4],
+			[, , ,],
+			[3, 3, 4, 0],
+			[, , ,],
+			[, , ,],
+			[4, 6, 2, 3],
+			[, , ,],
+			[, , ,]
 		],
 		[
 			[],
-			["", "", "", ""],
-			["1", "1", "0 1", "0"],
-			["0", "0", "0 1", "0"],
-			["", "", "", ""],
-			["3", "3", "0 1", "0"],
-			["", "", "", ""],
-			["", "", "", ""],
-			["", "", "", ""],
-			["", "", "", ""],
-			["", "", "", ""]
+			[, , ,],
+			[1, 1, 4, 0],
+			[0, 0, 4, 0],
+			[, , ,],
+			[3, 3, 4, 0],
+			[, , ,],
+			[, , ,],
+			[, , ,],
+			[, , ,],
+			[, , ,]
 		],
 		[
 			[],
-			["", "", "", ""],
-			["", "", "", ""],
-			["2", "2", "0 1", "4"],
-			["", "", "", ""],
-			["", "", "", ""],
-			["", "", "", ""],
-			["1", "1", "0", "2"],
-			["1", "1", "1", "2"],
-			["", "", "", ""],
-			["", "", "", ""]
+			[, , ,],
+			[, , ,],
+			[2, 2, 4, 4],
+			[, , ,],
+			[, , ,],
+			[, , ,],
+			[1, 1, 0, 2],
+			[1, 1, 1, 2],
+			[, , ,],
+			[, , ,]
 		],
 		[
 			[],
-			["", "", "", ""],
-			["1", "1", "0 1", "0"],
-			["0", "0", "0 1", "0"],
-			["2", "2", "0 1", "4"],
-			["3", "3", "0 1", "0"],
-			["", "", "", ""],
-			["4", "4 5", "0 3", "3"],
-			["", "", "", ""],
-			["3", "3", "1", "1"],
-			["3", "3", "0", "1"]
+			[, , ,],
+			[1, 1, 4, 0],
+			[0, 0, 4, 0],
+			[2, 2, 4, 4],
+			[3, 3, 4, 0],
+			[, , ,],
+			[4, 6, 3, 3],
+			[, , ,],
+			[3, 3, 1, 1],
+			[3, 3, 0, 1]
 		],
 		[
 			[],
-			["", "", "", ""],
-			["", "", "", ""],
-			["0", "0", "0 1", "0"],
-			["", "", "", ""],
-			["", "", "", ""],
-			["", "", "", ""],
-			["0", "0", "0", "1"],
-			["0", "0", "1", "1"],
-			["", "", "", ""],
-			["", "", "", ""],
-			["", "", "", ""]
+			[, , ,],
+			[, , ,],
+			[0, 0, 4, 0],
+			[, , ,],
+			[, , ,],
+			[, , ,],
+			[0, 0, 0, 1],
+			[0, 0, 1, 1],
+			[, , ,],
+			[, , ,],
+			[, , ,]
 		]
 	],
 	customInnerHTML: [
 		{
 			cell: [6, 1],
-			data: "<b>Lunch</b>"
+			data: '<b>Lunch</b>'
 		}
 	],
 	span: [
@@ -102,369 +205,200 @@ var timetable_data = {
 		{
 			row: [7, 2],
 			col: [4, 1]
-		},
-	]
-};
-
-var table = document.getElementById("timetable");
-var timetable_options = document.getElementById("timetable_options");
-var timetable_flip_select = document.getElementById("button_flip_select");
-
-function timetableGetCellTemplate(list) {
-	var td = document.createElement("td");
-	var i = 0;
-	for(var key in timetable_data["custom_attributes"]) {
-		var p = document.createElement("p");
-		p.classList.add(key);
-		if(list) {
-			var attr_list = list[i].split(" ");
-			attr_list.forEach(attr => {
-				p.classList.add(key + attr);
-			});
 		}
-		td.appendChild(p);
-		++i;
-	}
-	return td;
-}
-
-function deployGrid() {
-	table.innerHTML = "";
-	// header row
-	var tr = document.createElement("tr");
-	for(var i=0; i<timetable_data["cols"]["data"].length; ++i){
-		var th = document.createElement("th");
-		th.classList.add("c" + i, "r0")
-		tr.appendChild(th);
-	}
-	table.appendChild(tr);
-	// rest rows
-	for(var i=1; i<timetable_data["rows"]["data"].length; ++i){
-		tr = document.createElement("tr");
-		var td = document.createElement("td");
-		td.classList.add("c0", "r" + i)
-		tr.appendChild(td);
-		for(var j=1; j<timetable_data["cols"]["data"].length; ++j){
-			td = timetableGetCellTemplate(timetable_data["cells"][j][i]);
-			td.classList.add("c" + j, "r" + i);
-			tr.appendChild(td);
+	],
+	processSelectedCells: () => {
+		const desc = document.getElementById('desc')
+		const options = document.getElementById('options')
+		if (timetable__data.selectedCells.length == 0) {
+			desc.innerHTML = 'No cell selected'
+			options.innerHTML = ''
+			return
 		}
-		table.appendChild(tr);
-	}
-	timetable_cells = table.querySelectorAll("td, th");
-}
-
-function fillRowTitles(){
-	var rowTitles = timetable_data["rows"]["data"];
-	for(var i=0; i<rowTitles.length; ++i){
-		document.querySelector(".r" + i).innerHTML = rowTitles[i];
-	}
-}
-
-function fillColumnTitles(){
-	var colTitles = timetable_data["cols"]["data"];
-	for(var i=0; i<colTitles.length; ++i){
-		document.querySelector(".c" + i).innerHTML = colTitles[i];
-	}
-}
-
-function fillCustomAttributes(){
-	for(var key in timetable_data["custom_attributes"]){
-		var elems = document.querySelectorAll("table td p." + key);
-		elems.forEach(elem => {
-			var classArray = Array.from(elem.classList);
-			var nums = classArray.length;
-			if(nums==2){
-				elem.innerHTML = timetable_data["custom_attributes"][key][classArray[1].replace(key, "")];
-			} else if(nums>2){
-				nums = classArray.slice(1);
-				for(var i=0; i<nums.length; ++i){
-					nums[i] = nums[i].replace(key, "");
+		if (timetable__data.selectedCellType.head == 0) {
+			if (timetable__data.selectedCells.length == 1) desc.innerHTML = 'data cell selected'
+			else desc.innerHTML = 'data cells selected'
+			options.innerHTML = ''
+			for (var select in timetable__data.selects) {
+				const div = document.createElement('div')
+				const p = document.createElement('p')
+				p.innerHTML = select
+				div.appendChild(p)
+				const selectElem = document.createElement('select')
+				selectElem.setAttribute('data-class', 'data-' + select)
+				timetable__data.selects[select].forEach(opt => {
+					const option = document.createElement('option')
+					option.value = opt
+					option.innerHTML = opt
+					selectElem.appendChild(option)
+				})
+				selectElem.oninput = () => {
+					timetable__data.selectedCells.forEach(cell => {
+						cell.querySelector('p[' + selectElem.getAttribute('data-class') + ']').innerHTML = selectElem.value
+					})
 				}
-				var delim = timetable_data["custom_attributes_concat"][key];
-				var info = timetable_data["custom_attributes"][key][nums[0]];
-				for(var i=1; i<nums.length; ++i){
-					info += delim + timetable_data["custom_attributes"][key][nums[i]];
-				}
-				elem.innerHTML = info;
+				options.appendChild(selectElem)
+				selectElem.value = (timetable__data.selectedCells.length == 1 ? (timetable__data.selectedCells[0].querySelector('p[data-' + select).innerHTML) : '')
 			}
-		});
-	}
-}
 
-var timetable_cells;
-var mouseclicked = 0;
-var cell_deactivate = false;
-var active_cells = 0;
-var key_ctrl_down = false;
-var copied_content = {
-	copied : false,
-	content : ""
-};
-
-function timetableDeplayEventListerners() {
-
-	table.addEventListener("mousedown", function() {
-		mouseclicked++;
-	});
-	
-	table.addEventListener("mouseup", function() {
-		mouseclicked--;
-	});
-	
-	table.addEventListener("mousemove", e => {
-		var cell = e.target;
-		if(mouseclicked==1){
-			while(cell.tagName.toLowerCase()!="td" && cell.tagName.toLowerCase()!="th") cell = cell.parentElement;
-			if(!cell_deactivate && !cell.classList.contains("active")){
-				cell.classList.add("active");
-				active_cells++;
-			} else if(cell_deactivate && cell.classList.contains("active")){
-				cell.classList.remove("active");
-				active_cells--;
+		} else if (timetable__data.selectedCellType.data == 0) {
+			if (timetable__data.selectedCells.length == 1) desc.innerHTML = 'head cell selected'
+			else desc.innerHTML = 'head cells selected'
+			const input = document.createElement('input')
+			input.type = 'text'
+			input.tabIndex = 0
+			input.value = timetable__data.selectedCells[0].innerHTML
+			input.oninput = () => {
+				timetable__data.selectedCells.forEach(cell => {
+					cell.innerHTML = input.value
+				})
 			}
-			updateTimetableOptions();
+			options.appendChild(input)
+		} else {
+			desc.innerHTML = 'Mixed cells selected'
+			options.innerHTML = ''
 		}
-	});
-
-	document.addEventListener("keydown", e => {
-		switch(e.keyCode){
-			case 17:	// ctrl
-				key_ctrl_down = true;
-				break;
-			case 67:	// c
-				if(key_ctrl_down) timetableCopyCell();
-				break;
-			case 86:	// v
-				if(key_ctrl_down) timetablePasteCell();
-				break;
-			case 46:	// del
-				timetableClearCells();
-				break;
-		}
-	});
-
-	document.addEventListener("keyup", e => {
-		if(e.keyCode == 17) key_ctrl_down = false;
-	});
-
-	timetable_cells.forEach(cell => {
-		cell.addEventListener("click", function() {
-		});
-	});
-	
-	table.addEventListener("click", e => {
-		var cell = e.target;
-		if(cell.tagName.toLowerCase()=="table") return;
-		while(cell.tagName.toLowerCase()!="td" && cell.tagName.toLowerCase()!="th") cell = cell.parentElement;
-		if(key_ctrl_down){
-			if(cell.classList.contains("active")){
-				cell.classList.remove("active");
-				active_cells--;
-			} else{
-				cell.classList.add("active");
-				active_cells++;
+	},
+	handleClick: (cell, event) => {
+		if (event.ctrlKey || timetable__data.batchMode) {
+			if (timetable__data.selectedCells.indexOf(cell) >= 0) {
+				var a = []
+				timetable__data.selectedCells.forEach(c => {
+					if (c != cell) a.push(c)
+				})
+				timetable__data.selectedCells = a
+				cell.classList.remove('active')
+				if (cell.classList.contains('r0') || cell.classList.contains('c0')) timetable__data.selectedCellType.head--
+				else timetable__data.selectedCellType.data--
+			} else {
+				timetable__data.selectedCells.push(cell)
+				cell.classList.add('active')
+				if (cell.classList.contains('r0') || cell.classList.contains('c0')) timetable__data.selectedCellType.head++
+				else timetable__data.selectedCellType.data++
 			}
 		} else {
-			timetableDeselectAll();
-			if(!cell.classList.contains("active")) {
-				cell.classList.add("active");
-				active_cells++;
+			timetable__data.deselectCells()
+			timetable__data.selectedCells.push(cell)
+			cell.classList.add('active')
+			if (cell.classList.contains('r0') || cell.classList.contains('c0')) timetable__data.selectedCellType.head++
+			else timetable__data.selectedCellType.data++
+		}
+		timetable__data.processSelectedCells()
+	},
+	displayTable: () => {
+		const table = document.getElementById('timetable')
+		table.innerHTML = ''
+		const rows = timetable__data.table_left.length
+		const cols = timetable__data.table_top.length
+		var tr = document.createElement('tr')
+		for (var i = 0; i < cols; ++i) {
+			var th = document.createElement('th')
+			th.setAttribute('class', 'r0 ' + 'c' + i)
+			tr.appendChild(th)
+		}
+		table.appendChild(tr)
+		for (var i = 1; i < rows; ++i) {
+			tr = document.createElement('tr')
+			for (var j = 0; j < cols; ++j) {
+				var td = document.createElement('td')
+				td.setAttribute('class', 'r' + i + ' c' + j)
+				tr.appendChild(td)
+			}
+			table.appendChild(tr)
+		}
+		table.querySelectorAll('.r0, .c0').forEach(cell => {
+			cell.setAttribute('data-ij', '')
+		})
+		// Spanning
+		timetable__data.span.forEach(span => {
+			const row = span.row[0]
+			const col = span.col[0]
+			const rows = span.row[1]
+			const cols = span.col[1]
+			const cell = table.querySelector('.r' + row + '.c' + col)
+			for (var i = 1; i < rows; ++i) {
+				var r = table.querySelector('.r' + (row + i) + '.c' + col)
+				r.parentElement.removeChild(r)
+			}
+			for (var j = 1; j < cols; ++j) {
+				var r = table.querySelector('.r' + row + '.c' + (col + j))
+				r.parentElement.removeChild(r)
+			}
+			cell.setAttribute('rowSpan', rows)
+			cell.setAttribute('colSpan', cols)
+		})
+		// fill data
+		timetable__data.fillTableData()
+	},
+	fillTableData: () => {
+		const table = document.getElementById('timetable')
+		const rows = timetable__data.table_left.length
+		const cols = timetable__data.table_top.length
+		var row, col, p, data, cell, d
+		for (col = 0; col < cols; ++col) {
+			cell = table.querySelector('.r0.c' + col)
+			cell.innerHTML = timetable__data.table_top[col]
+		}
+		for (row = 1; row < rows; ++row) {
+			cell = table.querySelector('.c0.r' + row)
+			cell.innerHTML = timetable__data.table_left[row]
+		}
+		for (row = 1; row < rows; ++row) {
+			for (col = 1; col < cols; ++col) {
+				cell = table.querySelector('.r' + row + '.c' + col)
+				if (cell) {
+					data = timetable__data.data_cells[col][row]
+					timetable__data.attrs.forEach((attr, i) => {
+						p = cell.querySelector('p[data-' + attr + ']')
+						if (!p) {
+							p = document.createElement('p')
+							p.setAttribute('data-' + attr, '')
+						}
+						d = data[i]
+						if (Number.isInteger(d)) p.innerHTML = timetable__data.selects[attr][d]
+						cell.appendChild(p)
+					})
+				}
 			}
 		}
-		updateTimetableOptions();
-	});
+		timetable__data.customInnerHTML.forEach(data => {
+			cell = table.querySelector('.r' + data.cell[0] + '.c' + data.cell[1])
+			cell.innerHTML = data.data
+		})
+	},
+	copyCells: () => {
+		if (timetable__data.selectedCellType.head > 0) return
+		timetable__data.copiedCells = []
+		timetable__data.selectedCells.forEach(cell => {
+			timetable__data.copiedCells.push(cell)
+		})
+	},
+	pasteCells: () => {
+		if (timetable__data.selectedCellType.head > 0) return
+		var i = 0
+		var l = timetable__data.copiedCells.length
+		timetable__data.selectedCells.forEach(cell => {
+			cell.innerHTML = timetable__data.copiedCells[i % l].innerHTML
+			i++
+		})
+		timetable__data.processSelectedCells()
+	},
+	clearCells: () => {
+		if (timetable__data.selectedCellType.head > 0) return
+		timetable__data.selectedCells.forEach(cell => {
+			cell.innerHTML = ''
+		})
+		timetable__data.processSelectedCells()
+	},
+	deselectCells: () => {
+		timetable__data.selectedCells.forEach(cell => {
+			cell.classList.remove('active')
+		})
+		timetable__data.selectedCells = []
+		timetable__data.selectedCellType.head = 0
+		timetable__data.selectedCellType.data = 0
+		timetable__data.processSelectedCells()
+	},
 }
 
-
-function timetable_addRow() {
-
-}
-
-function timetable_addCol() {
-
-}
-
-function timetableFlipBatchSelect() {
-	if(cell_deactivate){
-		timetable_flip_select.innerHTML = "Batch cell select";
-	} else {
-		timetable_flip_select.innerHTML = "Batch cell deselect";
-	}
-	cell_deactivate = !cell_deactivate;
-}
-
-function timetableCopyCell() {
-	var cells = table.querySelectorAll("td.active");
-	if(cells.length != 1) return;
-	var cell = cells[0];
-	if(cell.classList.contains("r0") || cell.classList.contains("c0")) return;
-	copied_content["copied"] = true;
-	copied_content["content"] = cell.innerHTML;
-}
-
-function timetablePasteCell() {
-	if(!copied_content["copied"]) return;
-	var cells = table.querySelectorAll("td.active");
-	cells.forEach(cell => {
-		if(!cell.classList.contains("r0") && !cell.classList.contains("c0")){
-			cell.innerHTML = copied_content["content"];
-		}
-	});
-	updateTimetableOptions();
-}
-
-function timetableClearCells() {
-	var cells = table.querySelectorAll("td.active");
-	cells.forEach(cell => {
-		cell.innerHTML = timetableGetCellTemplate().innerHTML;
-	});
-	updateTimetableOptions();
-}
-
-function timetableDeselectAll() {
-	timetable_cells.forEach(cell => {
-		cell.classList.remove("active");
-	});
-	active_cells = 0;
-	updateTimetableOptions();
-}
-
-function showSingleCellOptions() {
-	var cells = table.querySelectorAll("td.active, th.active");
-	var widget = timetable_options.querySelector("#options");
-	widget.innerHTML = "";
-
-	if(cells.length == 0) {
-		timetable_options.querySelector("#desc").innerHTML = "No cell selected";
-	}
-
-	if(cells.length != 1) return;
-	var cell = cells[0];
-	if(cell.classList.contains("r0") || cell.classList.contains("c0")) {
-		timetable_options.querySelector("#desc").innerHTML = "Header Cell Options";
-		widget.innerHTML = `<input type="text" tabindex=0 value="` + table.querySelector(".active").innerText + `" oninput=updateSingleCellOption("header")></input>`;
-	}
-	else {
-		timetable_options.querySelector("#desc").innerHTML = "Data Cell options";
-		for(var key in timetable_data["custom_attributes"]){
-			var select = document.createElement("select");
-			select.id = "select_" + key;
-			select.setAttribute("onchange", "updateSingleCellOption('select_" + key + "')");
-			timetable_data["custom_attributes"][key].forEach(option => {
-				var option_elem = document.createElement("option");
-				option_elem.value = option;
-				option_elem.innerHTML = option;
-				select.appendChild(option_elem);
-			});
-			select.value = table.querySelector(".active p." + key).innerHTML;
-			var div = document.createElement("div");
-			var p = document.createElement("p");
-			p.innerHTML = key;
-			div.appendChild(p);
-			div.appendChild(select);
-			widget.appendChild(div);
-		}
-	}
-}
-
-function showGroupCellOptions() {
-	var cells_header = table.querySelectorAll(".r0.active, .c0.active");
-	var cells_data = [];
-	var widget = timetable_options.querySelector("#options");
-	for(var i=1; i<timetable_data["rows"]["data"].length; ++i){
-		for(var j=1; j<timetable_data["cols"]["data"].length; ++j){
-			var elem = table.querySelector(".r"+i+".c"+j);
-			if(elem && elem.classList.contains("active")) cells_data.push(elem);
-		}
-	}
-	if(cells_header.length>0 && cells_data.length==0){
-		timetable_options.querySelector("#desc").innerHTML = active_cells + " header cells selected";
-	} else if (cells_header.length==0 && cells_data.length>0){
-		timetable_options.querySelector("#desc").innerHTML = active_cells + " data cells selected";
-	} else {
-		timetable_options.querySelector("#desc").innerHTML = active_cells + " Mixed cells selected";
-	}
-}
-
-function updateTimetableOptions() {
-	if(active_cells < 2) showSingleCellOptions();
-	else showGroupCellOptions();
-}
-
-/**
- * @param {string} type
- */
-function updateSingleCellOption(type) {
-	if(type=="header"){
-		table.querySelector(".active").innerHTML = timetable_options.querySelector("input").value;
-	} else if(type.match("select_")){
-		var key = type.replace("select_", "");
-		table.querySelector(".active p." + key).innerHTML = timetable_options.querySelector("select#select_" + key).value;
-	}
-}
-
-function fillCustomInnerHTML() {
-	var innerHTMLs = timetable_data["customInnerHTML"];
-	innerHTMLs.forEach(html => {
-		var cell = table.querySelector(".r" + html["cell"][0] + ".c" + html["cell"][1]);
-		cell.innerHTML = html["data"];
-	});
-}
-
-function deployCellSpans() {
-	var spans = timetable_data["span"];
-	spans.forEach(span => {
-		var row = span["row"][0];
-		var col = span["col"][0];
-		var rows = span["row"][1];
-		var cols = span["col"][1];
-		var elem = table.querySelector(".r" + row + ".c" + col);
-		var string = "";
-		for(var i=1; i<rows; ++i){
-			var f = table.querySelector(".r" + (row + i) + ".c" + (col));
-			string += f.innerHTML;
-			f.remove();
-		}
-		for(var i=1; i<cols; ++i){
-			var f = table.querySelector(".r" + (row) + ".c" + (col + i))
-			string += f.innerHTML;
-			f.remove();
-		}
-		elem.setAttribute("rowspan", rows);
-		elem.setAttribute("colspan", cols);
-		elem.innerHTML = elem.innerHTML + string;
-	});
-}
-
-function resetTimeTableVariables() {
-	mouseclicked = 0;
-	cell_deactivate = false;
-	active_cells = 0;
-	key_ctrl_down = false;
-	copied_content = {
-		copied : false,
-		content : ""
-	};
-	var widget = timetable_options.querySelector("#options");
-	widget.innerHTML = "";
-	timetable_options.querySelector("#desc").innerHTML = "No cell selected";
-}
-
-function showTimeTable() {
-	resetTimeTableVariables();
-	deployGrid();
-	fillRowTitles();
-	fillColumnTitles();
-	fillCustomAttributes();
-	timetableDeplayEventListerners();
-	fillCustomInnerHTML();
-	deployCellSpans();
-
-	{
-		// ankurparihar.github.io
-		document.getElementById("demo_content").classList.remove("flex");
-	}
-}
-
-window.onload = showTimeTable;
+spa.register('/projects/time-table', timetable__data)
