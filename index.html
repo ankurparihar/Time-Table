@@ -10,38 +10,48 @@
 
 </head>
 <body>
-	<div id="timetable_holder">
-		<h2>Department of Computer Science & Engineering</h2>
-		<h3>Indian Institute of Technology Roorkee</h3>
-		<h3>Autumn 2019 - 2020</h4>
-		<h4>Time Table of B.Tech IV year</h4>
-		<table id="timetable" class="noselect"></table>
-	</div>
-	<div id="timetable_options">
-		<p id="desc">No cell selected</p>
-		<div id="options">
+	<div id="demo_page" class="demo-page page">
+		<div id="demo_page_body">
+			<div class="demo_page-body">
+				<div class="demo_page-cont flex wrap">
+					<div id="timetable_holder">
+						<h2>Department of Computer Science & Engineering</h2>
+						<h3>Indian Institute of Technology Roorkee</h3>
+						<h3>Autumn 2019 - 2020</h4>
+						<h4>Time Table of B.Tech IV year</h4>
+						<table id="timetable" class="noselect"></table>
+					</div>
+					<div id="timetable_options">
+						<p id="desc">No cell selected</p>
+						<div id="options">
+						</div>
+						<div id="copy_paste">
+							<button id="button_copy" onclick="timetableCopyCell()">Copy cell</button>
+							<button id="button_paste" onclick="timetablePasteCell()">Paste cell</button>
+							<button id="button_clear" onclick="timetableClearCells()">Clear cell</button>
+						</div>
+						<div id="cell_select_flip">
+							<button id="button_flip_select" onclick="timetableFlipBatchSelect()">Batch cell select</button>
+							<button id="button_deselect" onclick="timetableDeselectAll()">Deselect all cells</button>
+						</div>
+					</div>
+					<div id="timetable_manual">
+						<div id="title">Instructions and Features</div>
+						<ul>
+							<li>Select single cells by clicking</li>
+							<li>Select multiple cells by clicking and moving</li>
+							<li>If selected cells are of same type [data or header], then options are displayed</li>
+							<li>Copy [button or ctrl+c] and Paste [button or ctrl+v] single cell</li>
+							<li>Copy [single cell], Paste [multiple cells], Clear [multiple cells]</li>
+							<li>Batch select or clear modes</li>
+							<li>Merge cells row-wise or column-wise, called <i>spanning</i></li>
+							<li>Right now table is configured using <a href="./data.js">data.js</a></li>
+							<li>Right now screenshot is the only way to save this</li>
+						</ul>
+					</div>
+				</div>
+			</div>
 		</div>
-		<div id="copy_paste">
-			<button id="button_copy" onclick="timetableCopyCell()">Copy cell</button>
-			<button id="button_paste" onclick="timetablePasteCell()">Paste cell</button>
-			<button id="button_clear" onclick="timetableClearCells()">Clear cell</button>
-		</div>
-		<div id="cell_select_flip">
-			<button id="button_flip_select" onclick="timetableFlipBatchSelect()">Batch cell select</button>
-			<button id="button_deselect" onclick="timetableDeselectAll()">Deselect all cells</button>
-		</div>
-	</div>
-	<div id="timetable_manual">
-		<p id="title">Instructions and Features</p>
-		<p>Select single cells by clicking</p>
-		<p>Select multiple cells by clicking and moving</p>
-		<p>If selected cells are of same type [data or header], then options are displayed</p>
-		<p>Copy [button or ctrl+c] and Paste [button or ctrl+v] single cell</p>
-		<p>Copy [single cell], Paste [multiple cells], Clear [multiple cells]</p>
-		<p>Batch select or clear modes</p>
-		<p>Merge cells row-wise or column-wise, called <i>spanning</i></p>
-		<p>Right now table is configured using <a href="./data.js">data.js</a></p>
-		<p>Right now screenshot is the only way to save this</p>
 	</div>
 	<script src="./data.js"></script>
 	<script src="./script.js"></script>
