@@ -13,6 +13,22 @@
 	height: 80px
 }
 
+#demo_page .demo_page-back,
+#demo_page .demo_page-info {
+	background-color: transparent;
+	box-shadow: none
+}
+
+#demo_page .demo_page-back svg,
+#demo_page .demo_page-info svg {
+	cursor: pointer
+}
+
+#demo_page .demo_page-back svg:hover,
+#demo_page .demo_page-info svg:hover {
+	color: #f3c669
+}
+
 #demo_page button {
 	outline: none
 }
@@ -20,7 +36,14 @@
 #demo_page .demo_page-title {
 	width: 100%;
 	font-size: 28px;
-	text-align: center
+	text-align: center;
+	margin: auto
+}
+
+@media (max-width:600px) {
+	#demo_page .demo_page-title {
+		font-size: 4.5vw;
+	}
 }
 
 .demo_page-body .demo_page-cont {

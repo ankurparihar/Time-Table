@@ -4,7 +4,13 @@ const timetable__data = {
 	template: `
 	<div id="demo_page" class="demo-page page">
 		<div class="demo_page-head flex">
+			<div class="demo_page-back btn" title="Back to all projects">
+				<svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="currentColor" d="M21,11H6.83L10.41,7.41L9,6L3,12L9,18L10.41,16.58L6.83,13H21V11Z"/></svg>
+			</div>
 			<div class="demo_page-title">Time-Table Generator</div>
+			<div class="demo_page-info btn" title="Info">
+				<svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="currentColor" d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z"/></svg>
+			</div>
 		</div>
 		<div class="demo_page-body">
 			<div class="demo_page-cont">
@@ -13,20 +19,19 @@ const timetable__data = {
 					<h3>Indian Institute of Technology Roorkee</h3>
 					<h3>Autumn 2019 - 2020</h3>
 					<h4>Time Table of B.Tech IV year</h4>
-					<table id="timetable" class="noselect">
-					</table>
+					<table id="timetable" class="noselect"></table>
 				</div>
 				<div id="timetable_options">
 					<p id="desc">No cell selected</p>
 					<div id="options" class="flex wrap"></div>
 					<div id="copy_paste">
-						<button class="btn" id="button_copy">Copy cell</button>
-						<button class="btn" id="button_paste">Paste cell</button>
-						<button class="btn" id="button_clear">Clear cell</button>
+						<button class="btn" aria-label="copy cells" id="button_copy">Copy cells</button>
+						<button class="btn" aria-label="paste cells" id="button_paste">Paste cells</button>
+						<button class="btn" aria-label="clear cells" id="button_clear">Clear cells</button>
 					</div>
 					<div id="cell_select_flip">
-						<button class="btn" id="button_flip_select">Enable multi-select</button>
-						<button class="btn" id="button_deselect">Deselect all cells</button>
+						<button class="btn" aria-label="enable multi select" id="button_flip_select">Enable multi-select</button>
+						<button class="btn" aria-label="deselect all cells" id="button_deselect">Deselect all cells</button>
 					</div>
 				</div>
 				<div id="timetable_manual">
@@ -50,20 +55,32 @@ const timetable__data = {
 		</div>
 	</div>
 	`,
-	apply: (root) => {
+	apply: (root, URLInfo) => {
 		if (root === undefined) {
 			console.warn('Error: contentRoot not specified')
 			return
 		}
 		root.innerHTML = timetable__data.template
 		timetable__data.displayTable()
-		timetable__data.onStaticLoad(root)
+		timetable__data.onStaticLoad(root, URLInfo)
 	},
-	onStaticLoad: (root) => {
+	onStaticLoad: (root, URLInfo) => {
 		if (root === undefined) {
 			console.warn('Error: contentRoot not specified')
 			return
 		}
+		const demoBackBtn = root.querySelector('.demo_page-back')
+		const demoInfoBtn = root.querySelector('.demo_page-info')
+		demoBackBtn.addEventListener('click', (e) => {
+			if (e.ctrlKey) window.open(URLInfo.protocol + '://' + URLInfo.domain + '/projects')
+			else {
+				spa.navigate(URLInfo.protocol + '://' + URLInfo.domain + '/projects')
+			}
+			e.preventDefault()
+		})
+		demoInfoBtn.addEventListener('click', () => {
+			showDialog(`<div class="card" style="height:auto"><div class="card__title headline">About Time-Table Generator</div><div class="card__text">This is a fun project I created in spare time. Time-Table generator creates time-tables with options like copy-paste, spanning etc.</div><div class="card__actions"><div class="spacer"></div><a target="_blank" rel="noopener" href="https://github.com/ankurparihar/Time-Table" class="btn btn--flat green--text text--darken-1"><div class="btn__content">View on Github</div></a></div></div>`)
+		})
 		const btn_cpy = document.getElementById('button_copy')
 		const btn_pst = document.getElementById('button_paste')
 		const btn_clr = document.getElementById('button_clear')

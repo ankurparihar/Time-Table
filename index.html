@@ -2,6 +2,9 @@
 <html lang="en">
 
 <head>
+	<link rel="dns-prefetch" href="https://www.googletagmanager.com">
+	<link rel="dns-prefetch" href="https://www.google-analytics.com">
+	<link rel="dns-prefetch" href="https://stats.g.doubleclick.net">
 	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135797512-1"></script>
 	<script>
 		window.dataLayer = window.dataLayer || [];
@@ -26,8 +29,7 @@
 	<title>Ankur's little playground</title>
 	<link rel="manifest" href="/manifest.json">
 	<link rel="shortcut icon" href="/media/img/AP-favicon.png">
-	<link rel="stylesheet" href="/media/vuetify-1.0.17.min.css">
-	<link rel="stylesheet" href="/media/style.css">
+	<link rel="stylesheet" href="/media/style.min.css">
 	<link rel="stylesheet" href="/media/simplebar.min.css">
 	<link rel="stylesheet" href="/media/fonts.roboto.css">
 	<link rel="stylesheet" href="/projects/time-table/style.css" id="injectedCSS">
@@ -36,6 +38,9 @@
 <body>
 	<div id="app" data-app="true" class="application theme--dark app-index-page">
 		<div class="overlay" id="overlay"></div>
+		<div class="dialog__content">
+			<div id="dialog" class="dialog"></div>
+		</div>
 		<div class="application--wrap">
 			<aside id="side-navigation" class="navigation-drawer navigation-drawer--close navigation-drawer--fixed navigation-drawer--floating navigation-drawer--temporary" style="height:100%;margin-top:0px;max-height:calc(100% - 0px);transform:translateX(-250px);width:250px"
 				data-booted="true">
@@ -268,7 +273,13 @@
 					<div class="container pa-0 fluid">
 						<div id="demo_page" class="demo-page page">
 							<div class="demo_page-head flex">
+								<div class="demo_page-back btn" title="Back to all projects">
+									<svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="currentColor" d="M21,11H6.83L10.41,7.41L9,6L3,12L9,18L10.41,16.58L6.83,13H21V11Z"/></svg>
+								</div>
 								<div class="demo_page-title">Time-Table Generator</div>
+								<div class="demo_page-info btn" title="Info">
+									<svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="currentColor" d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z"/></svg>
+								</div>
 							</div>
 							<div class="demo_page-body">
 								<div class="demo_page-cont">
@@ -283,13 +294,13 @@
 										<p id="desc">No cell selected</p>
 										<div id="options" class="flex wrap"></div>
 										<div id="copy_paste">
-											<button class="btn" id="button_copy">Copy cell</button>
-											<button class="btn" id="button_paste">Paste cell</button>
-											<button class="btn" id="button_clear">Clear cell</button>
+											<button class="btn" aria-label="copy cells" id="button_copy">Copy cells</button>
+											<button class="btn" aria-label="paste cells" id="button_paste">Paste cells</button>
+											<button class="btn" aria-label="clear cells" id="button_clear">Clear cells</button>
 										</div>
 										<div id="cell_select_flip">
-											<button class="btn" id="button_flip_select">Enable multi-select</button>
-											<button class="btn" id="button_deselect">Deselect all cells</button>
+											<button class="btn" aria-label="enable multi select" id="button_flip_select">Enable multi-select</button>
+											<button class="btn" aria-label="deselect all cells" id="button_deselect">Deselect all cells</button>
 										</div>
 									</div>
 									<div id="timetable_manual">
@@ -317,7 +328,7 @@
 			</main>
 			<div class="site-description">
 				<div class="sd-content" id="sd-container">
-					<p>Developed with love by <a href="https://github.com/ankurparihar" tabindex="-1" target="_blank">Ankur Parihar</a>, a Computer Science Undergraduate from IIT Roorkee who loves to explore the web and computers. I also love music, books, gaming and tea@tapri with friends :)</p>
+					<p>Developed with love by <a href="https://github.com/ankurparihar" tabindex="-1" target="_blank" rel="noopener">Ankur Parihar</a>, a Computer Science Undergraduate from IIT Roorkee who loves to explore the web and computers. I also love music, books, gaming and tea@tapri with friends :)</p>
 					<p>This site presents my profile, work and useful resources. The site's design is partially inspired from rddzc://rkxswo.df (NSFW warning!!) but the entire logical structure and backend was rewritten from scratch in order to remove external dependies, customize the structure and improve site's performance.</p>
 				</div>
 			</div>
@@ -325,7 +336,7 @@
 				<div class="footer__main">
 					<div class="flex footer__column footer__column--logo">
 						<a href="/" class="footer__logo-link nuxt-link-exact-active nuxt-link-active">
-							<img src="/media/img/logo-50.png" alt="hanime.tv footer logo">
+							<img src="/media/img/logo-50.png" alt="footer logo">
 						</a>
 					</div>
 					<div class="flex footer__column">
@@ -363,7 +374,7 @@
 					</div>
 				</div>
 			</footer>
-			<button id="back-to-top-btn" type="button" class="search-fab elevation-3 btn btn--bottom btn--floating btn--fixed btn--right theme--dark primary" style="transform-origin:center center;display:none;">
+			<button id="back-to-top-btn" type="button" aria-label="back to top" class="search-fab elevation-3 btn btn--bottom btn--floating btn--fixed btn--right theme--dark primary" style="transform-origin:center center;display:none">
 				<div class="btn__content">
 					<svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41,15.41L12,10.83L16.59,15.41L18,14L12,8L6,14L7.41,15.41Z"/></svg>
 				</div>
